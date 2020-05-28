@@ -11,7 +11,6 @@ const productRoutes = require('./routes/product')
 dotenv.config()
 var app = express()
 
-
 // Kết nối với Database
 mongoose.connect(process.env.DATABASE,
 { useNewUrlParser: true, useUnifiedTopology: true },

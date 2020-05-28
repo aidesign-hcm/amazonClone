@@ -3,7 +3,7 @@ const router = express.Router();
 const Product = require('../models/product')
 const upload = require('../middlewares/uploads-photo')
 
-router.post('/products', upload.single("photo"), async(req,res) => {
+router.post('/products', upload.single("photo"), async (req,res) => {
     try {
         let product = new Product();
         product.title = req.body.title; 
