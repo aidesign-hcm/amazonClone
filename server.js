@@ -7,6 +7,8 @@ const dotenv = require('dotenv')
 const User = require('./models/user')
 
 const productRoutes = require('./routes/product')
+const categoryRoutes = require('./routes/category')
+const ownerRoutes = require('./routes/owner')
 
 dotenv.config()
 var app = express()
@@ -21,32 +23,20 @@ err => {
         console.log('connected to database')
     }
 })
+mongoose.Promise = global.Promise;
 
 app.use(morgan('dev'))
 
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-
-
 
 app.get('/', (req, res) => {
     res.json('Hello Amazon clone App')
 })
 app.use('/api', productRoutes)
+app.use('/api', categoryRoutes)
+app.use('/api', ownerRoutes)
 
-// app.post('/', (req, res) => {
-//     let user = new User();
-//     user.name = req.body.name;
-//     user.email = req.body.email;
-//     user.password = req.body.password;
-//     user.save(err => {
-//         if (err) {
-//             res.json(err)
-//         } else {
-//             res.json('User create Sucssefuly')
-//         }
-//     })
-// })
 
 app.listen(3000, err => {
     if(err) {

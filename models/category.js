@@ -5,4 +5,4 @@ const categorySchema = new Schema({
     type: {type: String, unique: true, required: true },
 })
 
-module.exports = mongoose.model('category', userSchema)
+module.exports = mongoose.model('category', categorySchema)
