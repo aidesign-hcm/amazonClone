@@ -3,12 +3,16 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose');
 const dotenv = require('dotenv')
+const cors = require('cors')
 
 const User = require('./models/user')
 
 const productRoutes = require('./routes/product')
 const categoryRoutes = require('./routes/category')
 const ownerRoutes = require('./routes/owner')
+const authRoutes = require('./routes/auth')
+const reviewRoutes = require('./routes/review')
+const addressRoutes = require('./routes/address')
 
 dotenv.config()
 var app = express()
@@ -25,10 +29,26 @@ err => {
 })
 mongoose.Promise = global.Promise;
 
-app.use(morgan('dev'))
 
+// CROS Cross-origin resource sharing
+// app.use((req, res, next) => {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     if (req.method === 'OPTIONS') {
+//       res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+//       return res.status(200).json({});
+//       }
+//     next();
+// });
+
+
+// Middelware
+app.use(cors())
+app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+
+
 
 app.get('/', (req, res) => {
     res.json('Hello Amazon clone App')
@@ -36,9 +56,12 @@ app.get('/', (req, res) => {
 app.use('/api', productRoutes)
 app.use('/api', categoryRoutes)
 app.use('/api', ownerRoutes)
+app.use('/api', authRoutes)
+app.use('/api', reviewRoutes)
+app.use('/api', addressRoutes)
 
 
-app.listen(3000, err => {
+app.listen(8000, err => {
     if(err) {
         console.log(err)
     } else {

@@ -4,15 +4,18 @@ const Product = require("../models/product");
 const upload = require("../middlewares/uploads-photo");
 var multer = require("multer");
 
+
 // Đăng sản phẩm lên Mongo
 router.post("/products", upload.single("photo"), async (req, res) => {
   try {
     let product = new Product();
     product.title = req.body.title;
     product.description = req.body.description;
-    // product.photo = req.file.location;
+    product.photo = req.file.location;
     product.price = req.body.price;
     product.StockQuantity = req.body.StockQuantity;
+    product.category = req.body.category;
+    product.owner = req.body.owner;
     await product.save();
     res.status(200).json({
       status: true,
@@ -30,20 +33,24 @@ router.post("/products", upload.single("photo"), async (req, res) => {
 
 router.get("/products", async (req, res) => {
   try {
-    let products = await Product.find();
+    let products = await Product.find()
+    .populate("owner category")
+    .exec();
     res.status(200).json({
       status: true,
-      count: products.length,
       products: products.map((product) => {
         return {
+          id: product._id,
           title: product.title,
           price: product.price,
           productImage: product.photo,
           description: product.description,
           StockQuantity: product.StockQuantity,
+          category: product.category,
+          owner: product.owner,
           request: {
             type: "GET",
-            url: "http://localhost:3000/api/products/" + product._id,
+            url: "http://localhost:8000/api/products/" + product._id,
           },
         };
       }),
@@ -60,21 +67,11 @@ router.get("/products", async (req, res) => {
 
 router.get("/products/:id", async (req, res) => {
   try {
-    let products = await Product.find({ _id: req.params.id });
+    let product = await Product.findOne({ _id: req.params.id })
+    .populate("owner category")
+    .exec();
     res.status(200).json({
-      products: products.map((product) => {
-        return {
-          title: product.title,
-          price: product.price,
-          productImage: product.photo,
-          description: product.description,
-          StockQuantity: product.StockQuantity,
-          request: {
-            type: "GET",
-            url: "http://localhost:3000/api/products/" + product._id,
-          },
-        };
-      }),
+      product: product
     });
   } catch (err) {
     console.log(err);
@@ -84,9 +81,9 @@ router.get("/products/:id", async (req, res) => {
   }
 });
 
-/// Chinh sua san pham
+/// Chinh sua san pham dang patch chinh sua tung noi dung
 
-router.put("/products/:id", (req, res, next) => {
+router.patch("/products/:id", (req, res, next) => {
     const id = req.params.id;
     const updateOps = {};
     for (const ops of req.body) {
@@ -107,6 +104,35 @@ router.put("/products/:id", (req, res, next) => {
       });
   }
 )
+/// Chinh sua san pham dang put chinh sua tung noi dung
+
+router.put("/products/:id", upload.single("photo"), async (req, res) => {
+  try {
+    let product = await Product.findByIdAndUpdate(
+      { _id: req.params.id },{ 
+        $set: {
+          title : req.body.title,
+          description : req.body.description,
+          photo : req.file.location,
+          price : req.body.price,
+          StockQuantity : req.body.StockQuantity,
+          categoryId : req.body.categoryId,
+          ownerId : req.body.ownerId,
+      }},
+      { upsert: true }
+    );
+    res.status(200).json({
+      updateProducts: product,
+      success: true 
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(404).json({
+      error: err,
+    });
+  }
+});
+
 // [
 // 	{
 // 	"propName" : "title", "value": "new cocacola"

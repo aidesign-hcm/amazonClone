@@ -8,7 +8,7 @@ router.post('/owners', upload.single("photo"), async (req,res) => {
         let owner = new Owner();
         owner.name = req.body.name; 
         owner.about = req.body.about; 
-        // category.photo = req.file.location; 
+        owner.photo = req.file.location; 
         await owner.save()
         res.status(200).json({
             status:true,
@@ -24,10 +24,10 @@ router.post('/owners', upload.single("photo"), async (req,res) => {
 
 router.get('/owners', async (req,res) => {
     try {
-        let owner = await Owner.find()
+        let owners = await Owner.find()
         res.status(200).json({
             status:true,
-            owner: owner
+            owners: owners
         })
     } catch (err) {
         console.log(err);
