@@ -11,7 +11,7 @@ const userSchema = new Schema({
         match: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     },
     password: {type: String, required: true},
-    address: {type: Schema.Types.ObjectId, ref: 'Address'}
+    address: {type: Schema.Types.ObjectId, ref: 'Address',}
 })
 
 // userSchema.pre('save', function(next){

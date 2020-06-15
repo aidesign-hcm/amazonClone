@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 
 // module.exports = (req, res, next) => {
 //     try {
-//         let checkBearer
 //         const token = req.headers.authorization.split(" ")[1];
 //         const decoded = jwt.verify(token, process.env.SECRETJSON);
 //         req.userData = decoded;
@@ -15,11 +14,11 @@ const jwt = require('jsonwebtoken');
 // };
 
 module.exports = function(req, res, next){
-    let token = req.headers['x-access-token'] || req.headers["authorization"];
-    // let checkBearer = "Bearer ";
-    // if (token.startsWith(checkBearer)){
-    //     token = token.slice(checkBearer.length, token.length)
-    // };
+    let token = req.headers['x-access-token'] || req.headers.authorization;
+    let checkBearer = "Bearer ";
+    if (token.startsWith(checkBearer)){
+        token = token.slice(checkBearer.length, token.length)
+    };
     console.log(token)
     if (token) {
         jwt.verify(token, process.env.SECRETJSON, (err, decoded) => {

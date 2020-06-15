@@ -3,9 +3,6 @@ const router = express.Router();
 var bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const checkAuth =  require('../middlewares/verify-token')
-
-
-
 const User =  require('../models/user')
 
 router.post('/auth/signup', (req, res, next) => {
@@ -32,8 +29,13 @@ router.post('/auth/signup', (req, res, next) => {
                 .save()
                 .then(result => {
                   console.log(result);
+                  const token = jwt.sign({ user }, process.env.SECRETJSON)
                   res.status(201).json({
-                    message: "User created"
+                    success:true,
+                    message: "User created",
+                    token,
+                    email: user.email,
+                    name: user.name
                   });
                 })
                 .catch(err => {
@@ -51,8 +53,8 @@ router.post('/auth/signup', (req, res, next) => {
 
 router.get('/auth/user', checkAuth, async (req, res, next) => {
     try {
-        
-        let foundUser = await User.findOne({email: req.body.email })
+        let foundUser = await User.findOne({_id: req.decoded._id })
+        .populate('address')
         if(foundUser) {
             res.json({
                 success: true,
@@ -144,10 +146,14 @@ router.post('/auth/login', async (req, res) => {
           
           if(foundUser.comparePassword(req.body.password)) {
             let token = jwt.sign(foundUser.toJSON(), process.env.SECRETJSON, {
-            expiresIn: "1h"} )
-            res.json({ success: true, token: token})
+            expiresIn: "4h"} )
+            res.json({ 
+              success: true, 
+              token: token, 
+              email: foundUser.email,
+              name: foundUser.name
+            })
         } else {
-          
             res.status(403).json({
               success: false,
               message: "authentication faled, wrong Password"
@@ -156,7 +162,7 @@ router.post('/auth/login', async (req, res) => {
       }
     } catch(err) {
       console.log(err),
-          res.status(500).json({ error: err })
+      res.status(500).json({ error: err })
   }
  })
 

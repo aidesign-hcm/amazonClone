@@ -18,8 +18,9 @@ dotenv.config()
 var app = express()
 
 // Kết nối với Database
+mongoose.set('useCreateIndex', true)
 mongoose.connect(process.env.DATABASE,
-{ useNewUrlParser: true, useUnifiedTopology: true },
+{ useNewUrlParser: true, useUnifiedTopology: true},
 err => {
     if (err) {
         console.log(err)
