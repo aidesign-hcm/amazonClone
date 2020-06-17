@@ -14,6 +14,7 @@ const authRoutes = require('./routes/auth')
 const reviewRoutes = require('./routes/review')
 const addressRoutes = require('./routes/address')
 const paymentRoutes = require('./routes/payment')
+const orderRoutes = require('./routes/order')
 
 dotenv.config()
 var app = express()
@@ -62,6 +63,7 @@ app.use('/api', authRoutes)
 app.use('/api', reviewRoutes)
 app.use('/api', addressRoutes)
 app.use('/api', paymentRoutes)
+app.use('/api', orderRoutes)
 
 
 app.listen(8000, err => {
