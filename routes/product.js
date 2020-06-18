@@ -43,7 +43,7 @@ router.get("/products", async (req, res) => {
           id: product._id,
           title: product.title,
           price: product.price,
-          productImage: product.photo,
+          photo: product.photo,
           description: product.description,
           StockQuantity: product.StockQuantity,
           category: product.category,
